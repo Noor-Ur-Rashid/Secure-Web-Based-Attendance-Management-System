@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Enroll Student</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            width: 520px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+            text-align: center;
+            position: relative;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        /* FLASH MESSAGE STYLE */
+        .flash {
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            font-weight: bold;
+            animation: fadeIn 0.4s ease-in-out;
+        }
+
+            .flash.success {
+                background: #e6fffa;
+                color: #065f46;
+            }
+
+            .flash.error {
+                background: #ffe6e6;
+                color: #8b0000;
+            }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-5px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        select, input[type="submit"] {
+            width: 85%;
+            padding: 10px 15px;
+            margin: 10px 0 15px 0;
+            border-radius: 30px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            outline: none;
+            transition: 0.2s;
+        }
+
+            select:focus {
+                border-color: #667eea;
+                box-shadow: 0 0 5px rgba(102,126,234,0.5);
+            }
+
+        input[type="submit"] {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+            input[type="submit"]:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            text-decoration: none;
+            color: white;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            padding: 8px 20px;
+            border-radius: 30px;
+            transition: 0.3s;
+        }
+
+            a:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+
+        p {
+            text-align: left;
+            font-weight: bold;
+            margin: 10px 0 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Enroll Student</h1>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        <div class="flash {{ category }}">
+            {{ message }}
+        </div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <p>
+                Teacher:<br>
+                <select name="teacher_id" required>
+                    {% for t in teachers %}
+                    <option value="{{ t.id }}">{{ t.username }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+
+            <p>
+                Student:<br>
+                <select name="student_id" required>
+                    {% for s in students %}
+                    <option value="{{ s.id }}">{{ s.username }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+
+            <p>
+                Subject:<br>
+                <select name="subject_id" required>
+                    {% for sub in subjects %}
+                    <option value="{{ sub.id }}">{{ sub.name }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+
+            <input type="submit" value="Enroll Student">
+        </form>
+
+        <a href="{{ url_for('admin_dashboard') }}">Back to Admin Dashboard</a>
+    </div>
+
+    <script>
+        // Auto-hide flash message after 4 seconds
+        setTimeout(() => {
+            const flash = document.querySelector(".flash");
+            if (flash) {
+                flash.style.opacity = "0";
+                flash.style.transition = "opacity 0.5s";
+                setTimeout(() => flash.remove(), 500);
+            }
+        }, 4000);
+    </script>
+
+</body>
+</html>

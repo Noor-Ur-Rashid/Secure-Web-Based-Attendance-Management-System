@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Dashboard</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            width: 600px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+            text-align: center;
+            color: white;
+        }
+
+        h2 {
+            margin-bottom: 5px;
+        }
+
+        p.welcome {
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+
+        .subject-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 10px;
+            transition: 0.3s;
+        }
+
+            .subject-card:hover {
+                background: rgba(255, 255, 255, 0.35);
+                transform: translateY(-3px);
+            }
+
+        a {
+            text-decoration: none;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .logout-btn {
+            margin-top: 20px;
+            padding: 10px 25px;
+            border: none;
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            border-radius: 25px;
+            cursor: pointer;
+        }
+
+        /* FLASH MESSAGE STYLES */
+        .flash {
+            background: rgba(0, 255, 128, 0.3);
+            color: white;
+            text-align: center;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Teacher Dashboard</h2>
+        <p class="welcome">Welcome {{ current_user.username }}</p>
+
+        <!-- FLASH MESSAGES -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <h3>Your Subjects</h3>
+
+        {% for subject in subjects %}
+        <div class="subject-card">
+            <a href="{{ url_for('teacher_subject_view', subject_id=subject.id) }}">
+                {{ subject.name }}
+            </a>
+        </div>
+        {% endfor %}
+
+        <a href="{{ url_for('logout') }}">
+            <button class="logout-btn">Logout</button>
+        </a>
+    </div>
+
+</body>
+</html>

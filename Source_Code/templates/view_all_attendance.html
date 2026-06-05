@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Subjects Attendance Summary</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            width: 900px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        p {
+            margin-bottom: 30px;
+            font-size: 16px;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        th {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f0f0f5;
+        }
+
+        tr:hover {
+            background-color: #e0dffb;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.3s ease;
+            color: white;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            text-decoration: none;
+            display: inline-block;
+        }
+
+            .btn:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>All Subjects Attendance Summary</h2>
+        <p>Welcome Admin {{ current_user.username }}</p>
+
+        {% if summary %}
+        <table>
+            <tr>
+                <th>Subject</th>
+                <th>Total Students</th>
+                <th>Total Records</th>
+                <th>Present</th>
+                <th>Absent</th>
+                <th>Attendance %</th>
+            </tr>
+
+            {% for item in summary %}
+            <tr>
+                <td>{{ item.subject_name }}</td>
+                <td>{{ item.total_students }}</td>
+                <td>{{ item.total_records }}</td>
+                <td>{{ item.present }}</td>
+                <td>{{ item.absent }}</td>
+                <td>{{ item.percentage }}%</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+        <p>No attendance records available.</p>
+        {% endif %}
+
+        <a href="{{ url_for('admin_dashboard') }}" class="btn">Back to Dashboard</a>
+    </div>
+
+</body>
+</html>

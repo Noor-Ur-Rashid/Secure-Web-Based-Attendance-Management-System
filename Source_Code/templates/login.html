@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Secure Login</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #6B73FF, #000DFF);
+            background-size: 400% 400%;
+            animation: gradientBG 12s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .login-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+            padding: 40px;
+            border-radius: 20px;
+            width: 350px;
+            color: white;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        label {
+            font-size: 14px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            outline: none;
+        }
+
+            input:focus {
+                box-shadow: 0 0 5px #fff;
+            }
+
+            button, input[type="submit"] {
+                width: 100%;
+                padding: 10px;
+                border-radius: 10px;
+                border: none;
+                background: white;
+                color: #333;
+                font-weight: bold;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                button:hover, input[type="submit"]:hover {
+                    background: #ddd;
+                    transform: scale(1.03);
+                }
+
+        .flash {
+            background: rgba(255, 0, 0, 0.3);
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .captcha-warning {
+            background: rgba(255, 165, 0, 0.3);
+            padding: 8px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .countdown {
+            margin-top: 15px;
+            background: rgba(255, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        img {
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .otp-btn {
+            margin-top: 10px;
+            background: #ffcc00;
+        }
+
+            .otp-btn:hover {
+                background: #e6b800;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h2>Secure Login</h2>
+
+        <!-- FLASH MESSAGES ONLY FOR LOGIN ERRORS -->
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="flash">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            {{ form.username.label }}
+            {{ form.username() }}
+
+            {{ form.password.label }}
+            {{ form.password() }}
+
+            {% if failed_attempts >= 3 %}
+            <div class="captcha-warning">
+                Too many failed attempts — Complete CAPTCHA
+            </div>
+
+            <img src="{{ url_for('captcha') }}" alt="CAPTCHA">
+
+            {{ form.captcha.label }}
+            {{ form.captcha() }}
+            {% endif %}
+
+            {{ form.submit() }}
+        </form>
+
+        {% if remaining_seconds %}
+        <div class="countdown">
+            Account locked. Try again in: <span id="time"></span>
+        </div>
+
+        <form method="POST" action="{{ url_for('send_otp') }}">
+            <input type="hidden" name="username" value="{{ form.username.data }}">
+            <button type="submit" class="otp-btn">
+                Verify via Email
+            </button>
+        </form>
+
+        <script>
+            let timeLeft = {{ remaining_seconds }};
+            function updateTimer() {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById("time").innerText =
+                    minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+                if (timeLeft > 0) {
+                    timeLeft--;
+                    setTimeout(updateTimer, 1000);
+                } else { location.reload(); }
+            }
+            updateTimer();
+        </script>
+        {% endif %}
+    </div>
+
+</body>
+</html>

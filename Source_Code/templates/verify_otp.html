@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify OTP</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            padding: 40px;
+            width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+            text-align: center;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        .message {
+            color: red;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            text-align: center;
+            letter-spacing: 3px;
+        }
+
+            input[type="text"]:focus {
+                outline: none;
+                border-color: #667eea;
+                box-shadow: 0 0 5px rgba(102,126,234,0.5);
+            }
+
+        .primary-btn {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            .primary-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+            }
+
+        .secondary-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 25px;
+            background: linear-gradient(to right, #ff416c, #ff4b2b);
+            color: white;
+            font-size: 14px;
+            margin-top: 15px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+            .secondary-btn:disabled {
+                opacity: 0.5;
+                cursor: not-allowed;
+            }
+
+        .timer {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Verify OTP</h2>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        {% for message in messages %}
+        <div class="message">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            <label>Enter OTP:</label>
+            <input type="text" name="otp" required>
+            <button type="submit" class="primary-btn">Verify</button>
+        </form>
+
+        <form method="POST" action="{{ url_for('resend_otp') }}">
+            <button id="resendBtn" type="submit" class="secondary-btn">
+                Resend OTP
+            </button>
+        </form>
+
+        {% if remaining_seconds is not none %}
+        <p class="timer">OTP expires in: <span id="time"></span></p>
+
+        <script>
+        let timeLeft = {{ remaining_seconds | default(0) }};
+        let resendBtn = document.getElementById("resendBtn");
+        let timeDisplay = document.getElementById("time");
+
+        function updateTimer() {
+            if (timeLeft > 0) {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+
+                timeDisplay.innerText =
+                    minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+
+                timeLeft--;
+                setTimeout(updateTimer, 1000);
+            } else {
+                timeDisplay.innerText = "OTP expired";
+                resendBtn.disabled = false;
+            }
+        }
+
+        if (timeLeft > 0) {
+            resendBtn.disabled = true;
+        } else {
+            resendBtn.disabled = false;
+        }
+
+        updateTimer();
+        </script>
+        {% endif %}
+
+    </div>
+
+</body>
+</html>

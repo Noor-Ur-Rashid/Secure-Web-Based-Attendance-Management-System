@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Student</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card {
+            background: white;
+            width: 400px;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+            text-align: center;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+            color: #333;
+        }
+
+        input[type="text"], input[type="email"], input[type="submit"] {
+            width: 80%;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 30px;
+            border: 1px solid #ccc;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input[type="submit"] {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+            input[type="submit"]:hover {
+                transform: translateY(-3px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            }
+
+        a button {
+            background: linear-gradient(to right, #667eea, #764ba2);
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            border-radius: 30px;
+            transition: 0.3s;
+            width: auto;
+            padding: 8px 20px;
+            margin-top: 15px;
+            text-decoration: none;
+        }
+
+            a button:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            }
+
+        label {
+            display: block;
+            text-align: left;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .flash-error {
+            background: rgba(255, 0, 0, 0.12);
+            color: #b30000;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        .flash-success {
+            background: rgba(0, 180, 0, 0.12);
+            color: #0a7a0a;
+            border: 1px solid rgba(0, 180, 0, 0.3);
+            padding: 10px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Create Student</h1>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        {% if category == "error" %}
+        <div class="flash-error">{{ message }}</div>
+        {% else %}
+        <div class="flash-success">{{ message }}</div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST">
+            {{ form.hidden_tag() }}
+
+            <label>{{ form.username.label }}</label>
+            {{ form.username(size=32) }}
+
+            <label>{{ form.email.label }}</label>
+            {{ form.email(size=32) }}
+
+            <input type="submit" value="Create Student">
+        </form>
+
+        <a href="{{ url_for('admin_dashboard') }}"><button>Back to Dashboard</button></a>
+    </div>
+
+</body>
+</html>
